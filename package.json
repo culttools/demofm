@@ -1,0 +1,10 @@
+{
+  "name": "demo-fm",
+  "version": "1.0.0",
+  "description": "Community radio PWA - music, politics, action, joy",
+  "scripts": {
+    "dev": "bun --hot serve.ts",
+    "build": "cp -r public dist"
+  },
+  "devDependencies": {}
+}
