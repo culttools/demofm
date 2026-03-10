@@ -4,8 +4,8 @@
   "description": "Community radio for the people -- music, politics, joy",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#A8C8E0",
+  "theme_color": "#A8C8E0",
   "orientation": "portrait",
   "icons": [
     {

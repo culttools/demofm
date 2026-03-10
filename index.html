@@ -3,363 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#A8C8E0">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>DEMO FM</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/tiktok-sans">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- SCANLINE OVERLAY -->
-  <div class="scanlines" aria-hidden="true"></div>
-  <div class="noise" aria-hidden="true"></div>
+  <!-- ANIMATED DITHERED BG -->
+  <canvas class="bg-canvas" id="bg-canvas" aria-hidden="true"></canvas>
 
-  <!-- DEVICE SHELL -->
-  <div id="device">
+  <!-- DESKTOP MENUBAR (desktop only) -->
+  <header class="menubar">
+    <span class="mb-logo">DEMO FM</span>
+    <span class="mb-right"><span class="mb-dot"></span> <span id="clock-desk">00:00</span></span>
+  </header>
 
-    <!-- TOP BAR -->
-    <header class="device-header">
-      <div class="brand">
-        <span class="brand-name">DEMO</span><span class="brand-fm">FM</span>
+  <!-- DESKTOP: multi-window / MOBILE: walkman device -->
+  <div id="desktop">
+
+    <!-- ===== PLAYER WINDOW ===== -->
+    <div class="win win--player" id="win-player">
+      <div class="win-bar">
+        <span class="win-title">player</span>
+        <span class="win-x win-close" data-close="player">&times;</span>
       </div>
-      <div class="status-leds">
-        <span class="led led--power on"></span>
-        <span class="led led--signal blink"></span>
-      </div>
-    </header>
 
-    <!-- LCD SCREEN -->
-    <div class="lcd-screen">
-      <div class="lcd-inner">
-        <!-- MARQUEE -->
-        <div class="lcd-marquee">
-          <span id="marquee-text">DEMO FM -- COMMUNITY RADIO FOR THE PEOPLE -- MUSIC / POLITICS / JOY -- TUNE IN</span>
+      <!-- Walkman body -->
+      <div class="walkman">
+        <div class="wm-screen">
+          <div class="wm-screen-inner">
+            <div class="wm-status">
+              <span class="wm-st" id="p-status">IDLE</span>
+              <span class="wm-clk" id="clock">00:00</span>
+            </div>
+            <div class="wm-track" id="p-track">DEMO FM</div>
+            <div class="wm-viz" id="visualizer">
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+              <span class="vb"></span><span class="vb"></span><span class="vb"></span><span class="vb"></span>
+            </div>
+          </div>
         </div>
-        <!-- NOW PLAYING -->
-        <div id="now-playing" class="lcd-now-playing">
-          <span class="np-label">NOW:</span>
-          <span id="np-title" class="np-title">SELECT A STATION</span>
+        <div class="wm-controls">
+          <button class="wm-btn" id="btn-prev">|&lt;</button>
+          <button class="wm-btn wm-btn--play" id="btn-play">&gt;</button>
+          <button class="wm-btn" id="btn-next">&gt;|</button>
         </div>
-        <!-- VU METER -->
-        <div class="vu-meter" id="vu-meter">
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
-          <div class="vu-bar"></div>
+        <div class="wm-label">DEMO FM</div>
+      </div>
+    </div>
+
+    <!-- ===== CONTENT WINDOWS ===== -->
+
+    <!-- LIVE -->
+    <div class="win win--content" id="win-live" data-panel="live">
+      <div class="win-bar">
+        <span class="win-title">live</span>
+        <span class="win-x win-close" data-close="live">&times;</span>
+      </div>
+      <div class="win-body">
+        <div class="live-block">
+          <div class="dither-orb" id="live-orb">
+            <span id="lo-text">OFF AIR</span>
+          </div>
+        </div>
+        <p class="wt">community radio. when we broadcast, it plays here.</p>
+        <button class="fluid-btn" id="btn-check-live">check signal</button>
+        <div class="sep"></div>
+        <div class="sc-box">
+          <iframe id="sc-player" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
+            src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jedentageinset/sets/fusion-festival-2023&color=%23D41920&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"
+          ></iframe>
         </div>
       </div>
     </div>
 
-    <!-- TRANSPORT CONTROLS -->
-    <div class="transport">
-      <button class="transport-btn" id="btn-prev" aria-label="Previous">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-      </button>
-      <button class="transport-btn transport-btn--play" id="btn-play" aria-label="Play">
-        <svg viewBox="0 0 24 24" width="24" height="24" id="play-icon"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-      </button>
-      <button class="transport-btn" id="btn-next" aria-label="Next">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
-      </button>
-      <button class="transport-btn" id="btn-stop" aria-label="Stop">
-        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>
-      </button>
-    </div>
-
-    <!-- TAPE REELS -->
-    <div class="tape-window">
-      <div class="tape-reel tape-reel--left" id="reel-left">
-        <div class="reel-hub"></div>
+    <!-- MIXTAPE -->
+    <div class="win win--content" id="win-mixtape" data-panel="mixtape">
+      <div class="win-bar">
+        <span class="win-title">archive</span>
+        <span class="win-x win-close" data-close="mixtape">&times;</span>
       </div>
-      <div class="tape-strip"></div>
-      <div class="tape-reel tape-reel--right" id="reel-right">
-        <div class="reel-hub"></div>
+      <div class="win-body">
+        <table class="tape-tbl">
+          <thead><tr><th>#</th><th>SESSION</th><th>DUR</th><th></th></tr></thead>
+          <tbody>
+            <tr class="tape-row" data-tape="001"><td class="tc-n">001</td><td>INAUGURAL BROADCAST</td><td class="tc-d">47:22</td><td><button class="tb-play">&gt;</button></td></tr>
+            <tr class="tape-row" data-tape="002"><td class="tc-n">002</td><td>FREQUENCIES OF RESISTANCE</td><td class="tc-d">62:10</td><td><button class="tb-play">&gt;</button></td></tr>
+            <tr class="tape-row" data-tape="003"><td class="tc-n">003</td><td>BASS THEORY</td><td class="tc-d">55:44</td><td><button class="tb-play">&gt;</button></td></tr>
+            <tr class="tape-row" data-tape="004"><td class="tc-n">004</td><td>SOUND SYSTEM CULTURE</td><td class="tc-d">71:08</td><td><button class="tb-play">&gt;</button></td></tr>
+            <tr class="tape-row" data-tape="005"><td class="tc-n">005</td><td>JOY AS METHOD</td><td class="tc-d">44:30</td><td><button class="tb-play">&gt;</button></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- TAB CONTENT AREA -->
-    <main class="content-area" id="content-area">
-
-      <!-- LIVE TAB -->
-      <section class="tab-panel active" id="panel-live">
-        <div class="panel-inner">
-          <div class="live-badge" id="live-badge">
-            <span class="live-dot"></span> ON AIR
-          </div>
-          <h2 class="section-title">LIVE BROADCAST</h2>
-          <p class="body-text">
-            Community radio powered by the people. When we're live, the stream plays here.
-            When we're off-air, dig through our SoundCloud archive below.
-          </p>
-          <div class="stream-embed" id="stream-container">
-            <div class="stream-placeholder">
-              <div class="cassette-icon">
-                <div class="cassette-body">
-                  <div class="cassette-window">
-                    <div class="cassette-reel c-reel-l"></div>
-                    <div class="cassette-reel c-reel-r"></div>
-                  </div>
-                  <div class="cassette-label">DEMO FM</div>
-                </div>
-              </div>
-              <p class="stream-status" id="stream-status">OFF AIR -- CHECK BACK SOON</p>
-              <button class="btn btn--primary" id="btn-check-live">CHECK STREAM</button>
-            </div>
-          </div>
-          <!-- SoundCloud fallback -->
-          <div class="sc-embed" id="sc-fallback">
-            <h3 class="subsection-title">ARCHIVE PLAYER</h3>
-            <iframe
-              id="sc-player"
-              width="100%"
-              height="166"
-              scrolling="no"
-              frameborder="no"
-              allow="autoplay"
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists&color=%23ff8c00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"
-            ></iframe>
-          </div>
+    <!-- NEWS -->
+    <div class="win win--content" id="win-news" data-panel="news">
+      <div class="win-bar">
+        <span class="win-title">dispatch</span>
+        <span class="win-x win-close" data-close="news">&times;</span>
+      </div>
+      <div class="win-body">
+        <div id="news-feed">
+          <article class="news-card">
+            <div class="nc-top"><span class="nc-date">loading...</span></div>
+            <h3 class="nc-title">fetching dispatches</h3>
+            <p class="nc-excerpt">connecting to feed...</p>
+          </article>
         </div>
-      </section>
+        <div class="news-attr">source: novara media</div>
+      </div>
+    </div>
 
-      <!-- MIXTAPE TAB -->
-      <section class="tab-panel" id="panel-mixtape">
-        <div class="panel-inner">
-          <h2 class="section-title">MIXTAPE ARCHIVE</h2>
-          <p class="body-text">Recorded sessions, guest mixes, and sonic dispatches from the community.</p>
-          <div class="tape-list" id="tape-list">
-            <div class="tape-card">
-              <div class="tape-card-side"></div>
-              <div class="tape-card-info">
-                <span class="tape-card-title">SESSION 001: INAUGURAL BROADCAST</span>
-                <span class="tape-card-meta">2026.03.01 / 47:22</span>
-              </div>
-              <button class="btn btn--small btn--play-tape" data-tape="001">PLAY</button>
-            </div>
-            <div class="tape-card">
-              <div class="tape-card-side"></div>
-              <div class="tape-card-info">
-                <span class="tape-card-title">SESSION 002: FREQUENCIES OF RESISTANCE</span>
-                <span class="tape-card-meta">2026.03.05 / 62:10</span>
-              </div>
-              <button class="btn btn--small btn--play-tape" data-tape="002">PLAY</button>
-            </div>
-            <div class="tape-card">
-              <div class="tape-card-side"></div>
-              <div class="tape-card-info">
-                <span class="tape-card-title">SESSION 003: BASS THEORY</span>
-                <span class="tape-card-meta">2026.03.07 / 55:44</span>
-              </div>
-              <button class="btn btn--small btn--play-tape" data-tape="003">PLAY</button>
-            </div>
-          </div>
+    <!-- CLUB -->
+    <div class="win win--content" id="win-club" data-panel="club">
+      <div class="win-bar">
+        <span class="win-title">the club</span>
+        <span class="win-x win-close" data-close="club">&times;</span>
+      </div>
+      <div class="win-body">
+        <table class="club-tbl">
+          <thead><tr><th>TIER</th><th>COST</th><th>ACCESS</th></tr></thead>
+          <tbody>
+            <tr><td>LISTENER</td><td>FREE</td><td>stream / archive / dispatch</td></tr>
+            <tr class="club-hl"><td>MEMBER</td><td>$5/mo</td><td>sessions / events / vote</td></tr>
+            <tr><td>BUILDER</td><td>$20/mo</td><td>shows / governance / credits</td></tr>
+          </tbody>
+        </table>
+        <div class="sep"></div>
+        <div class="ev"><span class="ev-d">MAR 15</span><span class="ev-n">Rooftop Session</span><span class="ev-t ev-irl">IRL</span></div>
+        <div class="ev"><span class="ev-d">MAR 22</span><span class="ev-n">Reading Group: Media Futures</span><span class="ev-t ev-web">WEB</span></div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="win win--content" id="win-about" data-panel="about">
+      <div class="win-bar">
+        <span class="win-title">about</span>
+        <span class="win-x win-close" data-close="about">&times;</span>
+      </div>
+      <div class="win-body">
+        <pre class="manifesto">music is political infrastructure.
+local signal over global noise.
+joy as resistance.
+the airwaves belong to everyone.</pre>
+        <div class="sep"></div>
+        <div class="crew" id="crew-grid">
+          <div class="crew-c" data-crew="0"><div class="crew-av"><canvas class="dither-av" width="64" height="64"></canvas></div><span class="crew-n">SELECTOR A</span></div>
+          <div class="crew-c" data-crew="1"><div class="crew-av"><canvas class="dither-av" width="64" height="64"></canvas></div><span class="crew-n">SELECTOR B</span></div>
+          <div class="crew-c" data-crew="2"><div class="crew-av"><canvas class="dither-av" width="64" height="64"></canvas></div><span class="crew-n">SELECTOR C</span></div>
         </div>
-      </section>
-
-      <!-- NEWS TAB -->
-      <section class="tab-panel" id="panel-news">
-        <div class="panel-inner">
-          <h2 class="section-title">DISPATCH</h2>
-          <p class="body-text">Curated news, calls to action, and community signals. No algorithm -- just people.</p>
-          <div class="news-feed" id="news-feed">
-            <article class="news-item">
-              <div class="news-date">2026.03.07</div>
-              <h3 class="news-headline">COMMUNITY RADIO ACT: WHAT IT MEANS FOR US</h3>
-              <p class="news-excerpt">
-                Low power FM stations are the last frontier of truly local media.
-                Here's how we build ours.
-              </p>
-              <span class="news-tag">POLITICS</span>
-            </article>
-            <article class="news-item">
-              <div class="news-date">2026.03.05</div>
-              <h3 class="news-headline">SOUND SYSTEM CULTURE AND COLLECTIVE JOY</h3>
-              <p class="news-excerpt">
-                From Kingston to Berlin, music infrastructure as political infrastructure.
-              </p>
-              <span class="news-tag">CULTURE</span>
-            </article>
-            <article class="news-item">
-              <div class="news-date">2026.03.03</div>
-              <h3 class="news-headline">FIRST BROADCAST RECAP + WHAT'S NEXT</h3>
-              <p class="news-excerpt">
-                We went live. Here's what happened, what broke, and where we go from here.
-              </p>
-              <span class="news-tag">UPDATE</span>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- CLUB TAB -->
-      <section class="tab-panel" id="panel-club">
-        <div class="panel-inner">
-          <h2 class="section-title">THE CLUB</h2>
-          <p class="body-text">
-            Membership means ownership. Join the signal. Shape the station.
-            This is not content -- this is infrastructure.
-          </p>
-          <div class="club-tiers">
-            <div class="club-card">
-              <div class="club-card-header">LISTENER</div>
-              <div class="club-card-price">FREE</div>
-              <ul class="club-features">
-                <li>Live stream access</li>
-                <li>Full mixtape archive</li>
-                <li>Community dispatch</li>
-              </ul>
-              <button class="btn btn--primary">TUNE IN</button>
-            </div>
-            <div class="club-card club-card--featured">
-              <div class="club-card-header">MEMBER</div>
-              <div class="club-card-price">$5/MO</div>
-              <ul class="club-features">
-                <li>Everything in Listener</li>
-                <li>Exclusive sessions</li>
-                <li>Event invites</li>
-                <li>Vote on programming</li>
-              </ul>
-              <button class="btn btn--accent">JOIN</button>
-            </div>
-            <div class="club-card">
-              <div class="club-card-header">BUILDER</div>
-              <div class="club-card-price">$20/MO</div>
-              <ul class="club-features">
-                <li>Everything in Member</li>
-                <li>Submit shows</li>
-                <li>Station governance</li>
-                <li>Name on the signal</li>
-              </ul>
-              <button class="btn btn--primary">BUILD</button>
-            </div>
-          </div>
-          <div class="club-events">
-            <h3 class="subsection-title">UPCOMING</h3>
-            <div class="event-item">
-              <span class="event-date">MAR 15</span>
-              <span class="event-name">ROOFTOP SESSION: DJ COLLECTIVE</span>
-              <span class="event-tag">IRL</span>
-            </div>
-            <div class="event-item">
-              <span class="event-date">MAR 22</span>
-              <span class="event-name">READING GROUP: MEDIA FUTURES</span>
-              <span class="event-tag">ONLINE</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ABOUT TAB -->
-      <section class="tab-panel" id="panel-about">
-        <div class="panel-inner">
-          <h2 class="section-title">ABOUT THE SIGNAL</h2>
-          <div class="about-mission">
-            <p class="body-text body-text--large">
-              DEMO FM is community radio infrastructure.
-              We broadcast music, politics, and joy --
-              not because they're separate things,
-              but because they never were.
-            </p>
-            <p class="body-text">
-              Inspired by low-power FM activism and sound system culture,
-              we build local signal as political practice.
-              Every broadcast is an act of collective imagination.
-              Every listener is a participant, not a consumer.
-            </p>
-          </div>
-          <div class="about-crew">
-            <h3 class="subsection-title">THE CREW</h3>
-            <div class="crew-grid" id="crew-grid">
-              <div class="crew-card" data-crew="founder">
-                <div class="crew-avatar">
-                  <div class="avatar-dither"></div>
-                </div>
-                <span class="crew-name">THE FOUNDER</span>
-                <span class="crew-role">STATION ARCHITECT</span>
-              </div>
-              <div class="crew-card" data-crew="dj1">
-                <div class="crew-avatar">
-                  <div class="avatar-dither"></div>
-                </div>
-                <span class="crew-name">DJ SIGNAL</span>
-                <span class="crew-role">RESIDENT</span>
-              </div>
-              <div class="crew-card" data-crew="dj2">
-                <div class="crew-avatar">
-                  <div class="avatar-dither"></div>
-                </div>
-                <span class="crew-name">SELECTOR K</span>
-                <span class="crew-role">GUEST ROTATION</span>
-              </div>
-            </div>
-          </div>
-          <div class="about-manifesto">
-            <h3 class="subsection-title">THE FREQUENCY</h3>
-            <ul class="manifesto-list">
-              <li>Music is political infrastructure</li>
-              <li>Local signal over global noise</li>
-              <li>Joy as resistance</li>
-              <li>Listeners are builders, not consumers</li>
-              <li>The airwaves belong to everyone</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- BOTTOM TAB BAR -->
-    <nav class="tab-bar" id="tab-bar">
-      <button class="tab-btn active" data-tab="live">
-        <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="3" fill="currentColor"/><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
-        <span>LIVE</span>
-      </button>
-      <button class="tab-btn" data-tab="mixtape">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H4v-2h8v2zm0-4H4V9h8v2zm6 4h-4V9h4v6z"/></svg>
-        <span>MIXTAPE</span>
-      </button>
-      <button class="tab-btn" data-tab="news">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-        <span>NEWS</span>
-      </button>
-      <button class="tab-btn" data-tab="club">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        <span>CLUB</span>
-      </button>
-      <button class="tab-btn" data-tab="about">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-        <span>ABOUT</span>
-      </button>
-    </nav>
+      </div>
+    </div>
 
   </div>
 
-  <!-- CREW POPUP MODAL -->
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal" id="crew-modal">
-      <button class="modal-close" id="modal-close">X</button>
-      <div class="modal-avatar">
-        <div class="avatar-dither avatar-dither--large"></div>
+  <!-- DOCK / NAV -->
+  <nav class="dock" id="dock">
+    <button class="dk active" data-tab="live">LIVE</button>
+    <button class="dk" data-tab="mixtape">TAPE</button>
+    <button class="dk" data-tab="news">NEWS</button>
+    <button class="dk" data-tab="club">CLUB</button>
+    <button class="dk" data-tab="about">INFO</button>
+  </nav>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal-overlay">
+    <div class="win win--modal">
+      <div class="win-bar">
+        <span class="win-title" id="modal-title">profile</span>
+        <span class="win-x" id="modal-close">&times;</span>
       </div>
-      <h3 class="modal-name" id="modal-name"></h3>
-      <p class="modal-role" id="modal-role"></p>
-      <p class="modal-bio" id="modal-bio"></p>
+      <div class="win-body modal-inner">
+        <p class="modal-name" id="modal-name"></p>
+        <p class="modal-bio" id="modal-bio"></p>
+      </div>
     </div>
   </div>
 
+  <script src="https://w.soundcloud.com/player/api.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

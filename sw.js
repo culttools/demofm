@@ -1,5 +1,5 @@
 // DEMO FM -- Service Worker
-var CACHE_NAME = 'demo-fm-v1';
+var CACHE_NAME = 'demo-fm-v7';
 var ASSETS = [
   '/',
   '/index.html',
